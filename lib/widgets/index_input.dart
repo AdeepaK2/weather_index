@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/index_utils.dart';
 
-class IndexInputWidget extends StatelessWidget {
+class IndexInputWidget extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onFetchWeather;
   final bool isLoading;
@@ -12,6 +12,31 @@ class IndexInputWidget extends StatelessWidget {
     required this.onFetchWeather,
     required this.isLoading,
   });
+
+  @override
+  State<IndexInputWidget> createState() => _IndexInputWidgetState();
+}
+
+class _IndexInputWidgetState extends State<IndexInputWidget> {
+  @override
+  void initState() {
+    super.initState();
+    // Listen to text changes to update coordinates
+    widget.controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    // Trigger rebuild when text changes
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +56,7 @@ class IndexInputWidget extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             TextField(
-              controller: controller,
+              controller: widget.controller,
               decoration: InputDecoration(
                 hintText: 'e.g., 224110P',
                 border: OutlineInputBorder(
@@ -40,12 +65,12 @@ class IndexInputWidget extends StatelessWidget {
                 prefixIcon: const Icon(Icons.person),
               ),
               textCapitalization: TextCapitalization.characters,
-              enabled: !isLoading,
+              enabled: !widget.isLoading,
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: isLoading ? null : onFetchWeather,
-              icon: isLoading
+              onPressed: widget.isLoading ? null : widget.onFetchWeather,
+              icon: widget.isLoading
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -55,7 +80,7 @@ class IndexInputWidget extends StatelessWidget {
                       ),
                     )
                   : const Icon(Icons.cloud_download),
-              label: Text(isLoading ? 'Fetching...' : 'Fetch Weather'),
+              label: Text(widget.isLoading ? 'Fetching...' : 'Fetch Weather'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.blue,
@@ -71,13 +96,13 @@ class IndexInputWidget extends StatelessWidget {
   }
 
   Widget _buildCoordinatesDisplay() {
-    if (controller.text.isEmpty ||
-        !IndexUtils.isValidIndex(controller.text)) {
+    if (widget.controller.text.isEmpty ||
+        !IndexUtils.isValidIndex(widget.controller.text)) {
       return const SizedBox.shrink();
     }
 
     try {
-      final coordinates = IndexUtils.deriveCoordinates(controller.text);
+      final coordinates = IndexUtils.deriveCoordinates(widget.controller.text);
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(

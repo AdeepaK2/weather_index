@@ -19,18 +19,21 @@ class WeatherData {
     this.isCached = false,
   });
 
-  // Create from JSON response from API
+  // Create from JSON response from API (OpenWeatherMap format)
   factory WeatherData.fromJson(
     Map<String, dynamic> json,
     String url,
     double lat,
     double lon,
   ) {
-    final currentWeather = json['current_weather'] as Map<String, dynamic>;
+    final main = json['main'] as Map<String, dynamic>;
+    final wind = json['wind'] as Map<String, dynamic>;
+    final weather = (json['weather'] as List<dynamic>)[0] as Map<String, dynamic>;
+
     return WeatherData(
-      temperature: (currentWeather['temperature'] as num).toDouble(),
-      windSpeed: (currentWeather['windspeed'] as num).toDouble(),
-      weatherCode: currentWeather['weathercode'] as int,
+      temperature: (main['temp'] as num).toDouble(),
+      windSpeed: (wind['speed'] as num).toDouble() * 3.6, // Convert m/s to km/h
+      weatherCode: weather['id'] as int,
       timestamp: DateTime.now().toIso8601String(),
       requestUrl: url,
       latitude: lat,

@@ -1,17 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/weather_data.dart';
 import '../utils/index_utils.dart';
 import 'cache_service.dart';
 
 class WeatherService {
-  static const String _baseUrl = 'https://api.open-meteo.com/v1/forecast';
+  static const String _baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
   final CacheService _cacheService = CacheService();
 
   /// Generate the request URL for the API call
   String generateRequestUrl(double latitude, double longitude) {
-    return '$_baseUrl?latitude=$latitude&longitude=$longitude&current_weather=true';
+    final apiKey = dotenv.env['OPENWEATHER_API_KEY'] ?? '';
+    return '$_baseUrl?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric';
   }
 
   /// Fetch weather data for a given student index
