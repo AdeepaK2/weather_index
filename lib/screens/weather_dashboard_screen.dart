@@ -136,8 +136,11 @@ class _WeatherDashboardScreenState extends State<WeatherDashboardScreen> {
         foregroundColor: Colors.white,
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         color: Colors.white,
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -517,6 +520,7 @@ class _WeatherDashboardScreenState extends State<WeatherDashboardScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 24), // Extra space at bottom
           ],
         ),
         ),
